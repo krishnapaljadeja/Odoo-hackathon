@@ -3,7 +3,13 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "build": "npm install && npm run migrate && npm run seed",
+    "migrate": "npx prisma migrate dev",
+    "generate": "npx prisma generate",
+    "seed": "npx prisma db seed",
+    "studio": "npx prisma studio"
   },
   "repository": {
     "type": "git",
@@ -17,6 +23,7 @@
   "homepage": "https://github.com/krishnapaljadeja/Odoo-hackathon#readme",
   "description": "",
   "dependencies": {
+    "@prisma/client": "^6.4.1",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
@@ -39,15 +46,5 @@
   "devDependencies": {
     "nodemon": "^3.1.9",
     "prisma": "^6.4.1"
-  },
-  "scripts": {
-  "start": "node index.js",
-  "dev": "nodemon index.js",
-  "build": "npm install && npm run migrate && npm run seed",
-  "migrate": "npx prisma migrate dev",
-  "generate": "npx prisma generate",
-  "seed": "npx prisma db seed",
-  "studio": "npx prisma studio"
-}
-
+  }
 }

@@ -1,0 +1,152 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  COMPANY_EMPLOYEE
+}
+
+enum ApplicationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  COMPLETED
+}
+
+model User {
+  id                    Int                    @id @default(autoincrement())
+  email                 String                 @unique
+  password              String
+  name                  String
+  role                  Role
+  profilePic            String
+  bio                   String?
+  coins                 Int                    @default(0)
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  enrollments           Enrollment[]
+  freelanceApplications FreelanceApplication[]
+  financialProfile      FinancialProfile?
+  alerts                EmergencyAlert[]
+  notifications         Notification[]
+  FreelanceProject      FreelanceProject[]
+  CoinTransaction       CoinTransaction[]
+}
+
+model Course {
+  id          Int          @id @default(autoincrement())
+  title       String
+  description String
+  instructor  String
+  coins       Int?
+  enrollments Enrollment[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Enrollment {
+  id        Int              @id @default(autoincrement())
+  userId    Int
+  courseId  Int
+  status    EnrollmentStatus
+  createdAt DateTime         @default(now())
+  user      User             @relation(fields: [userId], references: [id])
+  course    Course           @relation(fields: [courseId], references: [id])
+}
+
+model FreelanceProject {
+  id           Int                    @id @default(autoincrement())
+  title        String
+  description  String
+  minCoins     Int
+  maxCoins     Int
+  postedBy     User                   @relation(fields: [postedById], references: [id])
+  postedById   Int
+  requirement  String[]
+  applications FreelanceApplication[]
+  createdAt    DateTime               @default(now())
+  updatedAt    DateTime               @updatedAt
+}
+
+model FreelanceApplication {
+  id        Int               @id @default(autoincrement())
+  userId    Int
+  projectId Int
+  proposal  String
+  status    ApplicationStatus
+  createdAt DateTime          @default(now())
+  user      User              @relation(fields: [userId], references: [id])
+  project   FreelanceProject  @relation(fields: [projectId], references: [id])
+}
+
+enum TransactionType {
+  EARN
+  SPEND
+}
+
+model CoinTransaction {
+  id          Int             @id @default(autoincrement())
+  userId      Int
+  amount      Int
+  type        TransactionType
+  description String
+  createdAt   DateTime        @default(now())
+  user        User            @relation(fields: [userId], references: [id])
+}
+
+
+model FinancialProfile {
+  id              Int     @id @default(autoincrement())
+  userId          Int     @unique
+  currentIncome   Float?
+  projectedIncome Float?
+  savings         Float?
+  financialGoals  String?
+  user            User    @relation(fields: [userId], references: [id])
+}
+
+model EmergencyAlert {
+  id        Int         @id @default(autoincrement())
+  userId    Int
+  alertTime DateTime    @default(now())
+  status    AlertStatus
+  location  String?
+  createdAt DateTime    @default(now())
+  user      User        @relation(fields: [userId], references: [id])
+}
+
+model Notification {
+  id        Int              @id @default(autoincrement())
+  userId    Int
+  type      NotificationType
+  message   String
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  user      User             @relation(fields: [userId], references: [id])
+}
+
+enum EnrollmentStatus {
+  ENROLLED
+  COMPLETED
+  DROPPED
+}
+
+enum AlertStatus {
+  ACTIVE
+  RESOLVED
+}
+
+enum NotificationType {
+  COURSE
+  FINANCIAL
+  SAFETY
+  GENERAL
+}
