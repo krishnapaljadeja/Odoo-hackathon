@@ -54,6 +54,7 @@ export const loginUser = async (req , res) => {
             {userId : user.id , role},
             process.env.JWT_SECRET,
         )
+        // console.log(token)
 
         res.cookie("token", token, {
             httpOnly: true,
