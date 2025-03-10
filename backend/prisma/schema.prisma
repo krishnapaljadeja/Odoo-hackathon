@@ -27,7 +27,7 @@ model User {
   password              String
   name                  String
   role                  Role
-  profilePic            String
+  profilePic            String?
   bio                   String?
   coins                 Int                    @default(0)
   createdAt             DateTime               @default(now())
